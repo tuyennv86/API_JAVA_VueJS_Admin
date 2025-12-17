@@ -33,26 +33,6 @@ public class MenuController {
         return new ResponseEntity<>(menuService.getAllMenus(), HttpStatus.OK);
     }
 
-    @PostMapping("")
-    public ResponseEntity<MenuDto> create(@RequestBody MenuRequest menuRequest) {
-        return new ResponseEntity<>(menuService.create(menuRequest), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<MenuDto> update(@PathVariable Integer id, @RequestBody MenuRequest menuRequest) {
-        return new ResponseEntity<>(menuService.update(id,menuRequest),HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
-        try {
-            menuService.delete(id);
-            return new ResponseEntity<>(new MessageResponse("Menu deleted successfully "+id), HttpStatus.OK);
-        }catch (Exception e) {
-            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @GetMapping("/my")
     public ResponseEntity<List<MenuDto>> myMenus(Authentication authentication) {
         if (authentication == null)
@@ -81,5 +61,25 @@ public class MenuController {
     public ResponseEntity<List<MenuDto>> search(@RequestParam String keyword) {
         List<MenuDto> list = menuService.getByKeyword(keyword);
         return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<MenuDto> create(@RequestBody MenuRequest menuRequest) {
+        return new ResponseEntity<>(menuService.create(menuRequest), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MenuDto> update(@PathVariable Integer id, @RequestBody MenuRequest menuRequest) {
+        return new ResponseEntity<>(menuService.update(id,menuRequest),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
+        try {
+            menuService.delete(id);
+            return new ResponseEntity<>(new MessageResponse("Menu deleted successfully "+id), HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
