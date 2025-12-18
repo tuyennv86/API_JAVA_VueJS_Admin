@@ -16,6 +16,6 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     @Query("SELECT DISTINCT m FROM Menu m JOIN m.roles r WHERE r.id IN :roleIds AND m.isActive = true ORDER BY m.sortOrder")
     List<Menu> findByRoleIds(@Param("roleIds") Set<Integer> roleIds);
 
-    @Query("select m from Menu m where :keyword is null or :keyword = '' or lower(m.name) like lower(concat('%', :keyword, '%'))")
+    @Query("SELECT m FROM Menu m WHERE (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Menu> findByKeyword(@Param("keyword") String keyword);
 }

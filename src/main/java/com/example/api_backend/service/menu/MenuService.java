@@ -114,24 +114,25 @@ public class MenuService implements IMenuService {
     // ✅ Xây cây cha–con
     private List<Menu> buildMenuTree(List<Menu> menus) {
         Map<Integer, Menu> menuMap = menus.stream().collect(Collectors.toMap(Menu::getId, m -> m));
-
         List<Menu> rootMenus = new ArrayList<>();
-
         for (Menu menu : menus) {
-            if (menu.getParentId() == null) {
+            Integer parentId = menu.getParentId();
+            if (parentId == null) {
                 rootMenus.add(menu);
             } else {
-                Menu parent = menuMap.get(menu.getParentId());
+                Menu parent = menuMap.get(parentId);
                 if (parent != null) {
                     parent.getChildren().add(menu);
+                } else {
+                    // parent không tồn tại → đưa lên root
+                    rootMenus.add(menu);
                 }
             }
         }
-
-        // sort toàn bộ tree
         sortRecursively(rootMenus);
         return rootMenus;
     }
+
     private void sortRecursively(List<Menu> menus) {
         menus.sort(Comparator.comparing(Menu::getSortOrder));
 
