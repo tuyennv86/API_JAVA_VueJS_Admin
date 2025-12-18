@@ -111,7 +111,7 @@ public class MenuService implements IMenuService {
        return menuMapper.toDtoList(treeMenus);
     }
 
-    // ✅ Xây cây cha–con
+    // ✅ Xây cây cha–con nếu có cha mà không tìm thấy cha thì đua lên đâu
     private List<Menu> buildMenuTree(List<Menu> menus) {
         Map<Integer, Menu> menuMap = menus.stream().collect(Collectors.toMap(Menu::getId, m -> m));
         List<Menu> rootMenus = new ArrayList<>();
