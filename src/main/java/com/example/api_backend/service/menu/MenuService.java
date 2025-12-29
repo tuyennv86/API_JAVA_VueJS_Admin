@@ -2,6 +2,7 @@ package com.example.api_backend.service.menu;
 
 import com.example.api_backend.dto.MenuDto;
 import com.example.api_backend.mapper.MenuMapper;
+import com.example.api_backend.mapper.PermissionMapper;
 import com.example.api_backend.model.Menu;
 import com.example.api_backend.model.Permission;
 import com.example.api_backend.model.Role;
@@ -11,6 +12,7 @@ import com.example.api_backend.repository.PermissionRepository;
 import com.example.api_backend.repository.UserRepository;
 import com.example.api_backend.request.MenuRequest;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,12 +26,14 @@ public class MenuService implements IMenuService {
     private final MenuRepository menuRepository;
     private final UserRepository userRepository;
     private final MenuMapper menuMapper;
+    private final PermissionMapper permissionMapper;
     private final PermissionRepository permissionRepository;
 
     @Override
     public List<MenuDto> getAllMenus() {
         List<Menu> list = menuRepository.findAll();
-        return menuMapper.toDtoList(list);
+        List<Menu> treeMenus = buildMenuTree(list);
+        return menuMapper.toDtoList(treeMenus);
     }
 
     @Override
@@ -40,7 +44,6 @@ public class MenuService implements IMenuService {
         List<Menu> flatMenus = menuRepository.findByRoleIds(roleIds);
         List<Menu> treeMenus = buildMenuTree(flatMenus);
         return menuMapper.toDtoList(treeMenus);
-        //return convertToDtoList(treeMenus);
     }
 
     @Override
@@ -49,6 +52,15 @@ public class MenuService implements IMenuService {
         Set<Role> roles = u.getRoles();
         List<Menu> list = menuRepository.findByRoleIds(roles.stream().map(Role::getId).collect(Collectors.toSet()));
         return menuMapper.toDtoList(buildMenuTree(list));
+    }
+
+    @Override
+    public MenuDto getMenuById(int id) {
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy menu có id =: " + id));
+        Hibernate.initialize(menu.getPermissions());
+        MenuDto menuDto = menuMapper.toDto(menu);
+        menuDto.setPermissions(menu.getPermissions());
+        return menuDto;
     }
 
     @Override
@@ -111,6 +123,13 @@ public class MenuService implements IMenuService {
        return menuMapper.toDtoList(treeMenus);
     }
 
+    @Override
+    public List<MenuDto> getOthers(Integer id) {
+        List<Menu> menus = menuRepository.findMenusOher(id);
+        List<Menu> treeMenus = buildMenuTree(menus);
+        return menuMapper.toDtoList(treeMenus);
+    }
+
     // ✅ Xây cây cha–con nếu có cha mà không tìm thấy cha thì đua lên đâu
     private List<Menu> buildMenuTree(List<Menu> menus) {
         Map<Integer, Menu> menuMap = menus.stream().collect(Collectors.toMap(Menu::getId, m -> m));
@@ -142,28 +161,4 @@ public class MenuService implements IMenuService {
             }
         }
     }
-
-//    private List<MenuDto> convertToDtoList(List<Menu> menus) {
-//        return menus.stream().map(this::convertToDto).collect(Collectors.toList());
-//    }
-//
-//    private MenuDto convertToDto(Menu menu) {
-//        MenuDto dto = new MenuDto();
-//        dto.setId(menu.getId());
-//        dto.setName(menu.getName());
-//        dto.setPath(menu.getPath());
-//        dto.setIcon(menu.getIcon());
-//        dto.setParentId(menu.getParentId());
-//        dto.setSortOrder(menu.getSortOrder());
-//        dto.setIsActive(menu.getIsActive());
-//
-//        List<MenuDto> childDtos = new ArrayList<>();
-//        if (menu.getChildren() != null && !menu.getChildren().isEmpty()) {
-//            childDtos = menu.getChildren().stream()
-//                    .map(this::convertToDto)
-//                    .collect(Collectors.toList());
-//        }
-//        dto.setChildren(childDtos);
-//        return dto;
-//    }
 }

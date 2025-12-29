@@ -27,6 +27,7 @@ public class MenuController {
 
     private final JwtUtils jwtUtils;
     private final IMenuService menuService;
+    private final MenuRepository menuRepository;
 
     @GetMapping("")
     public ResponseEntity< List<MenuDto>> list() {
@@ -61,6 +62,21 @@ public class MenuController {
     public ResponseEntity<List<MenuDto>> search(@RequestParam String keyword) {
         List<MenuDto> list = menuService.getByKeyword(keyword);
         return ResponseEntity.ok(list);
+    }
+    @GetMapping("/others/{id}")
+    public ResponseEntity<List<MenuDto>> getOthers(@PathVariable Integer id) {
+        List<MenuDto> list;
+        if(id == null || id <= 0) {
+            list = menuService.getAllMenus();
+        }else {
+            list = menuService.getOthers(id);
+        }
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuDto> get(@PathVariable Integer id) {
+        return new ResponseEntity<>(menuService.getMenuById(id), HttpStatus.OK);
     }
 
     @PostMapping("")

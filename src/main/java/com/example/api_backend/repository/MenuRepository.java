@@ -18,4 +18,7 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
     @Query("SELECT m FROM Menu m WHERE (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Menu> findByKeyword(@Param("keyword") String keyword);
+
+    @Query("select m from Menu m where m.id != :id ")
+    List<Menu> findMenusOher(@Param("id") Integer id);
 }
