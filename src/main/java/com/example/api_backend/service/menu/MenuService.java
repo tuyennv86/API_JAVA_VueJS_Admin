@@ -11,6 +11,7 @@ import com.example.api_backend.repository.MenuRepository;
 import com.example.api_backend.repository.PermissionRepository;
 import com.example.api_backend.repository.UserRepository;
 import com.example.api_backend.request.MenuRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
@@ -75,6 +76,7 @@ public class MenuService implements IMenuService {
         menuRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public MenuDto update(Integer id, MenuRequest menuRequest) {
         Menu menu = menuRepository.findById(id).orElseThrow(() -> new RuntimeException("Menu not found"));
@@ -96,6 +98,7 @@ public class MenuService implements IMenuService {
         return menuMapper.toDto(menu);
     }
 
+    @Transactional
     @Override
     public MenuDto create(MenuRequest menuRequest) {
 

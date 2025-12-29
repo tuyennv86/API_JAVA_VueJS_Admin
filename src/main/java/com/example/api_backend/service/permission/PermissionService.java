@@ -12,6 +12,7 @@ import com.example.api_backend.repository.PermissionRepository;
 import com.example.api_backend.repository.RoleRepository;
 import com.example.api_backend.request.PermissionRequest;
 import com.example.api_backend.response.ListPermissionResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -57,6 +58,7 @@ public class PermissionService implements IPermissionService {
     }
 
     @Override
+    @Transactional
     public PermissionDto save(PermissionRequest permissionRequest) {
         if(permissionRepository.existsByName(permissionRequest.getName())){
             throw new DataIntegrityViolationException("Tên này đã tồn tại");
@@ -69,6 +71,7 @@ public class PermissionService implements IPermissionService {
     }
 
     @Override
+    @Transactional
     public PermissionDto update(Integer id, PermissionRequest permissionRequest) {
         Permission permission = permissionRepository.findById(id).orElseThrow(()-> new RuntimeException("Không tìm thấy Permission có id ="+id));
         // kiểm tra xem tên Permission đã tồn tại hay chưa không tinh Permission hiện tại
@@ -84,6 +87,7 @@ public class PermissionService implements IPermissionService {
     }
 
     @Override
+    @Transactional
     public void delete(Integer id) {
         // kiểm tra xem tồn tại hay không
         Permission permission = permissionRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tồn tai Permission có id ="+id));

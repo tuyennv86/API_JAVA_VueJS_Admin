@@ -12,6 +12,7 @@ import com.example.api_backend.repository.PermissionRepository;
 import com.example.api_backend.repository.RoleRepository;
 import com.example.api_backend.request.RoleRequest;
 import com.example.api_backend.response.ListRoleResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -73,6 +74,7 @@ public class RoleService implements IRoleService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Integer id) {
         Role role = roleRepository.findById(id).orElseThrow(()->new RuntimeException("Role không tìm thấy"));
         role.getPermissions().clear(); // xóa permission
@@ -82,6 +84,7 @@ public class RoleService implements IRoleService {
         roleRepository.delete(role);
     }
 
+    @Transactional
     @Override
     public RoleDto save(RoleRequest roleRequest) {
         // kiem tra xem ten role da co hay chua
@@ -93,16 +96,16 @@ public class RoleService implements IRoleService {
         role.setDescription(roleRequest.getDescription());
         if(roleRequest.getMenuIds() != null && !roleRequest.getMenuIds().isEmpty()) {
             Set<Menu> menus = new HashSet<>(menuRepository.findAllById(roleRequest.getMenuIds()));
-            role.setMenus(menus);
+            role.getMenus().addAll(menus);
         }
         if(roleRequest.getPermissionIds() != null && !roleRequest.getPermissionIds().isEmpty()) {
             Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(roleRequest.getPermissionIds()));
-            role.setPermissions(permissions);
+            role.getPermissions().addAll(permissions);
         }
         roleRepository.save(role);
         return roleMapper.toDto(role);
     }
-
+    @Transactional
     @Override
     public RoleDto update(Integer id, RoleRequest roleRequest) {
 
@@ -119,12 +122,12 @@ public class RoleService implements IRoleService {
         role.getMenus().clear();
         if(roleRequest.getMenuIds() != null && !roleRequest.getMenuIds().isEmpty()) {
             Set<Menu> menus = new HashSet<>(menuRepository.findAllById(roleRequest.getMenuIds()));
-            //role.setMenus(menus);
             role.getMenus().addAll(menus);
         }
+        //xóa bỏ bảng role_permissions
+        role.getPermissions().clear();
         if(roleRequest.getPermissionIds() != null && !roleRequest.getPermissionIds().isEmpty()) {
             Set<Permission> permissions = new HashSet<>(permissionRepository.findAllById(roleRequest.getPermissionIds()));
-//            role.setPermissions(permissions);
             role.getPermissions().addAll(permissions);
         }
         roleRepository.save(role);
