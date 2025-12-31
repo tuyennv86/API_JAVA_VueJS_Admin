@@ -20,7 +20,7 @@ app:
   cors:
     allowed-origins:
       - "http://localhost:5173"
-#      - "https://myapp.com" ttheemcac dia chi can cap cho
+#      - "https://myapp.com" them cac dia chi can cap cho
     allowed-methods:
       - "GET"
       - "POST"

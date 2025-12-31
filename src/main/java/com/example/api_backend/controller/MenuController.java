@@ -89,6 +89,11 @@ public class MenuController {
         return new ResponseEntity<>(menuService.update(id,menuRequest),HttpStatus.OK);
     }
 
+    @PutMapping("changIsActive/{id}")
+    public ResponseEntity<MenuDto> changIsActive(@PathVariable Integer id) {
+        return new ResponseEntity<>(menuService.changisActive(id),HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Integer id) {
         try {

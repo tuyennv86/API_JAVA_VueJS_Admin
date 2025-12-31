@@ -27,7 +27,6 @@ public class MenuService implements IMenuService {
     private final MenuRepository menuRepository;
     private final UserRepository userRepository;
     private final MenuMapper menuMapper;
-    private final PermissionMapper permissionMapper;
     private final PermissionRepository permissionRepository;
 
     @Override
@@ -131,6 +130,14 @@ public class MenuService implements IMenuService {
         List<Menu> menus = menuRepository.findMenusOher(id);
         List<Menu> treeMenus = buildMenuTree(menus);
         return menuMapper.toDtoList(treeMenus);
+    }
+
+    @Override
+    public MenuDto changisActive(Integer id) {
+        Menu menu = menuRepository.findById(id).orElseThrow(() -> new RuntimeException("Menu not found"));
+        menu.setIsActive(!menu.getIsActive());
+        menuRepository.save(menu);
+        return menuMapper.toDto(menu);
     }
 
     // ✅ Xây cây cha–con nếu có cha mà không tìm thấy cha thì đua lên đâu

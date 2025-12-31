@@ -15,4 +15,5 @@ public interface IMenuService {
     MenuDto create(MenuRequest menuRequest);
     List<MenuDto> getByKeyword(String keyword);
     List<MenuDto> getOthers(Integer id);
+    MenuDto changisActive(Integer id);
 }
