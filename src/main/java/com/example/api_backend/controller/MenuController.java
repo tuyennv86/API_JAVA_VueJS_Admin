@@ -1,11 +1,7 @@
 package com.example.api_backend.controller;
 
 import com.example.api_backend.dto.MenuDto;
-import com.example.api_backend.model.Menu;
-import com.example.api_backend.model.Role;
-import com.example.api_backend.model.User;
 import com.example.api_backend.repository.MenuRepository;
-import com.example.api_backend.repository.UserRepository;
 import com.example.api_backend.request.MenuRequest;
 import com.example.api_backend.response.MessageResponse;
 import com.example.api_backend.security.JwtUtils;
@@ -30,7 +26,7 @@ public class MenuController {
     private final MenuRepository menuRepository;
 
     @GetMapping("")
-    public ResponseEntity< List<MenuDto>> list() {
+    public ResponseEntity<List<MenuDto>> list() {
         return new ResponseEntity<>(menuService.getAllMenus(), HttpStatus.OK);
     }
 
