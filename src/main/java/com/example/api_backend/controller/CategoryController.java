@@ -1,8 +1,10 @@
 package com.example.api_backend.controller;
 
 import com.example.api_backend.dto.CategoryDto;
+import com.example.api_backend.dto.MenuDto;
 import com.example.api_backend.request.CategoryRequest;
 import com.example.api_backend.response.ListCategoryResponse;
+import com.example.api_backend.response.MessageResponse;
 import com.example.api_backend.service.FileStorageService;
 import com.example.api_backend.service.category.ICategoryService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,8 @@ import java.util.List;
 @RequestMapping("${app.api.prefix}/category")
 
 public class CategoryController {
-    private final ICategoryService categoryService;
+
+    private final ICategoryService categoryService; 
     private final FileStorageService fileStorageService;
 
     @GetMapping("")
@@ -33,10 +36,15 @@ public class CategoryController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ListCategoryResponse> GetSearch(@RequestParam String search, @RequestParam Integer page, @RequestParam Integer size){
+    public ResponseEntity<ListCategoryResponse> GetSearch(@RequestParam String keyword, @RequestParam Integer page, @RequestParam Integer size){
         PageRequest pageRequest = PageRequest.of(page - 1,size);
-        ListCategoryResponse listCategoryResponse = categoryService.searchByKeyword(search, pageRequest);
+        ListCategoryResponse listCategoryResponse = categoryService.searchByKeyword(keyword, pageRequest);
         return new ResponseEntity<>(listCategoryResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("getbytypecode/{typecode}")
+    public ResponseEntity<List<CategoryDto>> GetByTypeCode(@PathVariable String typecode){
+        return new ResponseEntity<>(categoryService.getByTypeCode(typecode), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -63,5 +71,19 @@ public class CategoryController {
 
         return new ResponseEntity<>(categoryService.createCategory(categoryRequest), HttpStatus.OK);
 
+    }
+    @PutMapping("changIsActive/{id}")
+    public ResponseEntity<CategoryDto> changIsActive(@PathVariable Integer id) {
+        return new ResponseEntity<>(categoryService.isChangIsActive(id),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponse> DeleteCategory(@PathVariable Integer id){
+        try {
+            categoryService.deleteCategory(id);
+            return new ResponseEntity<>(new MessageResponse("User deleted successfully "+id), HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }

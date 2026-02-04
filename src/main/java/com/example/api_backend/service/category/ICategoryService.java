@@ -11,8 +11,11 @@ public interface ICategoryService {
     CategoryDto getCategoryById(int id);
     List<CategoryDto> getAllCategories();
     ListCategoryResponse searchByKeyword(String keyword, Pageable pageable);
+    List<CategoryDto> getByTypeCode(String typeCode);
+
     CategoryDto createCategory(CategoryRequest categoryRequest);
     CategoryDto updateCategory(int id, CategoryRequest categoryRequest);
+    CategoryDto isChangIsActive(int id);
     void deleteCategory(int id);
 
 

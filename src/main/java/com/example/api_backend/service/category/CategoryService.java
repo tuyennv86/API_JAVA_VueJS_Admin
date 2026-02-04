@@ -49,6 +49,11 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    public List<CategoryDto> getByTypeCode(String typeCode) {
+        return categoryMapper.toDtoList(buildCategoryTree(categoryRepository.findCategoryByTypeCode(typeCode)));
+    }
+
+    @Override
     @Transactional
     public CategoryDto createCategory(CategoryRequest categoryRequest) {
         Category category = new Category();
@@ -94,6 +99,14 @@ public class CategoryService implements ICategoryService {
         }
         category.setTypeCode(categoryRequest.getTypeCode());
         category.setIsActive(categoryRequest.getIsActive());
+        categoryRepository.save(category);
+        return categoryMapper.toDto(category);
+    }
+
+    @Override
+    public CategoryDto isChangIsActive(int id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+        category.setIsActive(!category.getIsActive());
         categoryRepository.save(category);
         return categoryMapper.toDto(category);
     }
