@@ -14,4 +14,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Page<Category>  findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     List<Category> findCategoryByTypeCode(String typeCode);
+    @Query("SELECT c FROM Category c WHERE c.typeCode = :typeCode AND c.id <> :id ")
+    List<Category> findCategoryByTypeCodeOtherId(String typeCode, int id);
 }

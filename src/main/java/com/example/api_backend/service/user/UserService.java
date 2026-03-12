@@ -107,6 +107,19 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserDto deleteAvata(int id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy user có id ="+ id));
+        // Nếu có ảnh thì xóa ảnh và cập nhật lại db
+        String oldFilePath = user.getImageUrl();
+        if (oldFilePath != null && !oldFilePath.isBlank()) {
+            fileStorageService.deleteFile(oldFilePath);
+        }
+        user.setImageUrl("");
+        userRepository.save(user);
+        return userMapper.toDto(user);
+    }
+
+    @Override
     @Transactional
     public UserDto updateUser(Integer id, UserRequest userRequest) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy user có id ="+ id));

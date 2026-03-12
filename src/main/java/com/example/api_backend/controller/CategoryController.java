@@ -2,6 +2,7 @@ package com.example.api_backend.controller;
 
 import com.example.api_backend.dto.CategoryDto;
 import com.example.api_backend.dto.MenuDto;
+import com.example.api_backend.model.Category;
 import com.example.api_backend.request.CategoryRequest;
 import com.example.api_backend.response.ListCategoryResponse;
 import com.example.api_backend.response.MessageResponse;
@@ -47,6 +48,16 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.getByTypeCode(typecode), HttpStatus.OK);
     }
 
+    @GetMapping("getotherId/{id}")
+    public ResponseEntity<List<CategoryDto>> GetOtherId(@PathVariable Integer id){
+        if(id != 0) {
+            CategoryDto category = categoryService.getCategoryById(id);
+            return new ResponseEntity<>(categoryService.getOtherId(id, category.getTypeCode()), HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> UpdateCategory(@PathVariable Integer id,
                                                       @RequestPart("category") CategoryRequest categoryRequest,
@@ -75,6 +86,10 @@ public class CategoryController {
     @PutMapping("changIsActive/{id}")
     public ResponseEntity<CategoryDto> changIsActive(@PathVariable Integer id) {
         return new ResponseEntity<>(categoryService.isChangIsActive(id),HttpStatus.OK);
+    }
+    @PutMapping("deleteImage/{id}")
+    public ResponseEntity<CategoryDto> deleteImage(@PathVariable Integer id) {
+        return new ResponseEntity<>(categoryService.deleteImage(id),HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

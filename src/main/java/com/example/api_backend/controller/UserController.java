@@ -1,5 +1,6 @@
 package com.example.api_backend.controller;
 
+import com.example.api_backend.dto.CategoryDto;
 import com.example.api_backend.dto.UserDto;
 import com.example.api_backend.response.ListUserResponse;
 import com.example.api_backend.request.UserRequest;
@@ -82,6 +83,10 @@ public class UserController {
 
         UserDto userDto = userService.createUser(userRequest);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+    }
+    @PutMapping("/deleteAvata/{id}")
+    public ResponseEntity<UserDto> deleteImage(@PathVariable Integer id) {
+        return new ResponseEntity<>(userService.deleteAvata(id),HttpStatus.OK);
     }
 
     // 🔹 Cập nhật user

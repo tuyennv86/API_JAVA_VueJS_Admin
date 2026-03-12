@@ -54,6 +54,12 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
+    public List<CategoryDto> getOtherId(int id, String typeCode) {
+        List<Category> categories = categoryRepository.findCategoryByTypeCodeOtherId(typeCode,id);
+        return categoryMapper.toDtoList(buildCategoryTree(categories));
+    }
+
+    @Override
     @Transactional
     public CategoryDto createCategory(CategoryRequest categoryRequest) {
         Category category = new Category();
@@ -107,6 +113,21 @@ public class CategoryService implements ICategoryService {
     public CategoryDto isChangIsActive(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
         category.setIsActive(!category.getIsActive());
+        categoryRepository.save(category);
+        return categoryMapper.toDto(category);
+    }
+
+    @Override
+    @Transactional
+    public CategoryDto deleteImage(int id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
+            // xóa ảnh cũ
+        String oldFilePath = category.getImageUrl();
+        if (oldFilePath != null && !oldFilePath.isBlank()) {
+            fileStorageService.deleteFile(oldFilePath);
+        }
+        // cập nhật ảnh mới
+        category.setImageUrl("");
         categoryRepository.save(category);
         return categoryMapper.toDto(category);
     }

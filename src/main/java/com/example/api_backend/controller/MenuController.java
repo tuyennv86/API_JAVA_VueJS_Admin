@@ -23,7 +23,6 @@ public class MenuController {
 
     private final JwtUtils jwtUtils;
     private final IMenuService menuService;
-    private final MenuRepository menuRepository;
 
     @GetMapping("")
     public ResponseEntity<List<MenuDto>> list() {

@@ -14,6 +14,7 @@ public interface IUserService {
     List<UserDto> getlist();
     void deleteUser(int id);
     UserDto createUser(UserRequest userRequest);
+    UserDto deleteAvata(int id);
     UserDto updateUser(Integer id, UserRequest userRequest);
 
 }
